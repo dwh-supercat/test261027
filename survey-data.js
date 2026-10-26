@@ -10,15 +10,10 @@
 
   // type: scale5 | choice(options) | text | textarea | bug(유/무 + 재현)
   DWH.SECTIONS = [
-    { id:"s1", no:"01", cat:"개요", nav:"목적·대상", title:"목적 · 대상 · 사용법",
+    { id:"s1", no:"01", cat:"개요", nav:"개요", title:"목적 · 대상",
       bodyHtml:
-        '<p class="helper"><b>목적</b>: 사내 플레이 테스트에서 재미 · 밸런스 · UX · 안정성 이슈를 구조적으로 수집한다.</p>'+
-        '<p class="helper"><b>대상</b>: 사내 테스터(기획 · 개발 · 아트 · QA). <b>소요</b>: 약 5분.</p>'+
-        '<div class="example"><div class="exl">응답 방법</div><div class="exc">'+
-        '<b>5점 척도</b> &nbsp;1 전혀 아니다 · 2 아니다 · 3 보통 · 4 그렇다 · 5 매우 그렇다<br>'+
-        '<b>객관식</b> &nbsp;보기 중 선택 &nbsp;·&nbsp; <b>주관식</b> &nbsp;겪은 상황과 재현 경로를 구체적으로<br>'+
-        '느낀 그대로, 근거(언제 · 어디서)를 함께 적을수록 반영이 쉽습니다. 응답은 자동 저장되며, 마지막 ‘제출’ 절에서 GitHub 로 올립니다.'+
-        '</div></div>' },
+        '<p class="helper"><b>목적</b>: 사내 플레이 테스트에서 재미 · 밸런스 · UX · 안정성 이슈를 수집한다.</p>'+
+        '<p class="helper"><b>대상</b>: 사내 테스터(기획 · 개발 · 아트 · QA). &nbsp; <b>소요</b>: 약 5분.</p>' },
 
     { id:"s2", no:"02", cat:"응답 정보", nav:"응답자·환경", title:"응답자 · 플레이 환경",
       helper:"분석 때 환경별로 묶어 보기 위한 기본 정보입니다.",
