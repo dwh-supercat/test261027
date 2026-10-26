@@ -1,11 +1,10 @@
-
 <!doctype html>
-<!-- DWH 사내 테스트 설문(응답 입력). 문항은 survey-data.js 공유, 제출은 GitHub 이슈, 집계는 results.html. -->
+<!-- DWH 사내 테스트 설문(응답 입력). 문항은 survey-data.js 공유, 제출은 Google Sheet(Apps Script), 집계는 results.html. -->
 <html lang="ko">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>사내 테스트 설문</title>
+<title>DWH 사내테스트 설문조사</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Do+Hyeon&display=swap">
 <style>
@@ -21,68 +20,16 @@
   body{margin:0;zoom:1.2;font-family:var(--font);background:var(--bg);color:var(--text);font-size:16px;font-weight:500;line-height:1.72;letter-spacing:-.01em;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
 
   .topnav{position:sticky;top:0;z-index:50;background:rgba(253,250,243,.92);backdrop-filter:saturate(1.3) blur(8px);border-bottom:1px solid #ddd0b6;box-shadow:0 2px 10px rgba(50,38,15,.06)}
-  .topnav .in{width:100%;display:flex;align-items:stretch;gap:0;padding:0 clamp(16px,2.2vw,34px);height:58px}
-  .navdiv{flex:none;align-self:stretch;width:1px;background:#e2d6bd}
-  .navdiv.sm{background:#e8dcc4}
-  .navtools{flex:none;align-self:stretch;display:flex;align-items:center;gap:clamp(9px,1vw,14px);padding-left:clamp(16px,1.9vw,30px);background:rgba(154,107,22,.05)}
-  .topnav .brand{align-self:stretch;display:flex;align-items:center;font-weight:800;font-size:15px;color:var(--dark);white-space:nowrap;flex:none;letter-spacing:-.01em;padding-right:clamp(16px,1.9vw,30px);background:rgba(154,107,22,.05)}
-  .brand .ver{display:inline-block;font-size:11px;font-weight:800;color:#fff;background:var(--accent);border-radius:6px;padding:2px 8px;margin-right:7px;vertical-align:1px;font-variant-numeric:tabular-nums}
-  .tabs{flex:1;min-width:0;display:flex;overflow-x:auto;align-items:stretch;justify-content:safe center;padding:0 clamp(10px,1.6vw,26px)}
-  .tabs::-webkit-scrollbar{height:3px}
-  .tabs::-webkit-scrollbar-thumb{background:#d6c8ac;border-radius:2px}
-  .tabdiv{flex:none;align-self:center;width:1px;height:15px;background:#ddd0b6;margin:0 9px}
-  .tabs a{flex:none;display:flex;align-items:center;gap:5px;padding:0 11px;font-size:13.5px;font-weight:600;color:#7a6a55;white-space:nowrap;border-bottom:2px solid transparent;text-decoration:none}
-  .tabs a .n{color:#bcac93;font-weight:700;font-variant-numeric:tabular-nums}
-  .tabs a:hover{color:var(--dark)}
-  .tabs a.active{color:var(--accent);border-bottom-color:var(--accent)}
-  .tabs a.active .n{color:var(--accent)}
+  .topnav .in{display:flex;align-items:center;padding:0 clamp(16px,4vw,40px);height:56px;max-width:1120px;margin:0 auto}
+  .brand{font-weight:800;font-size:16px;color:var(--dark);letter-spacing:-.01em}
 
-  .switch{flex:none;align-self:center;display:flex;gap:2px;padding:3px;border:1px solid var(--line);border-radius:9px;background:rgba(154,107,22,.06)}
-  .sbtn{cursor:pointer;font:700 12px/1 var(--font);color:var(--muted);background:transparent;border:0;border-radius:6px;padding:6px 13px;letter-spacing:-.01em;transition:.14s ease}
-  .sbtn:hover{color:var(--text)}
-  .sbtn.on{background:var(--accent);color:#fff}
-  .lnk{flex:none;align-self:center;font:700 12.5px/1 var(--font);color:var(--muted);background:transparent;border:1px solid var(--line);border-radius:9px;padding:8px 12px;text-decoration:none;white-space:nowrap;transition:.14s ease}
-  .lnk:hover{color:var(--accent);border-color:var(--accent)}
-  .toc-btn{cursor:pointer;font:700 12.5px/1 var(--font);color:var(--muted);background:transparent;border:1px solid var(--line);border-radius:9px;padding:8px 12px;display:flex;align-items:center;gap:6px;white-space:nowrap;align-self:center;flex:none;transition:.14s ease}
-  .toc-btn:hover{color:var(--text);border-color:var(--accent)}
-  body.toc-open #tocBtn{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
-
-  .jump-hl{border-radius:12px;box-shadow:0 0 0 3px var(--accent),0 0 0 9px var(--accent-soft)!important;animation:jumpPulse .85s ease-out 1}
-  @keyframes jumpPulse{from{box-shadow:0 0 0 3px var(--accent),0 0 0 0 rgba(154,107,22,.4)}to{box-shadow:0 0 0 3px var(--accent),0 0 0 9px var(--accent-soft)}}
-  @media (prefers-reduced-motion:reduce){.jump-hl{animation:none}}
-
-  .shell{display:flex;align-items:stretch}
-  .col-main{flex:1;min-width:0}
-  .panel{flex:none;width:272px;border-left:1px solid var(--line);background:var(--bg)}
-  body:not(.toc-open) #panel{display:none}
-  .panel-inner{position:sticky;top:0;max-height:calc(100vh/1.2);overflow-y:auto;overscroll-behavior:contain}
-  body.toc-open #panel .panel-inner{animation:tocIn .22s ease}
-  @keyframes tocIn{from{opacity:.3;transform:translateX(14px)}to{opacity:1;transform:none}}
-  .panel-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:16px 15px 13px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--bg);z-index:1}
-  .panel-head .dt{font-weight:800;font-size:14px;color:var(--text);letter-spacing:-.01em}
-  .panel-close{cursor:pointer;font-size:15px;line-height:1;color:var(--muted);background:transparent;border:0;padding:5px 8px;border-radius:7px}
-  .panel-close:hover{color:var(--text);background:rgba(154,107,22,.12)}
-  .toc{display:flex;flex-direction:column;gap:2px;padding:12px 12px 34px}
-  .toc-cat{font-size:11px;font-weight:800;letter-spacing:.02em;color:var(--muted);margin:14px 8px 4px}
-  .toc-cat:first-child{margin-top:2px}
-  .toc a{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;font-size:13px;font-weight:600;color:#7a6a55;text-decoration:none;white-space:nowrap}
-  .toc a .tn{font-size:11px;font-weight:700;color:#bcac93;font-variant-numeric:tabular-nums;flex:none;min-width:18px}
-  .toc a:hover{background:rgba(154,107,22,.08);color:var(--text)}
-  .toc a.active{background:var(--accent-soft);color:var(--accent)}
-  .toc a.active .tn{color:var(--accent)}
-
-  main{max-width:1120px;margin:0 auto;padding:22px clamp(16px,4vw,40px) 120px}
-  .hero{background:linear-gradient(135deg,#2b1e08 0%,#8a5e12 100%);color:#fff;padding:24px 30px;border-radius:16px;margin-bottom:12px}
+  main{max-width:1120px;margin:0 auto;padding:22px clamp(16px,4vw,40px) 60px}
+  .hero{background:linear-gradient(135deg,#2b1e08 0%,#8a5e12 100%);color:#fff;padding:24px 30px;border-radius:16px;margin-bottom:14px}
   .hero h1{font-family:var(--display);font-size:30px;line-height:1.12;margin:0 0 6px;letter-spacing:0;font-weight:800}
   .hero p{color:#f2e9d8;margin:0;max-width:820px;font-size:14px;font-weight:500}
   [contenteditable="true"]{outline:none;border-radius:6px;transition:.14s ease}
   .hero [contenteditable="true"]:hover{background:rgba(255,255,255,.07)}
   .hero [contenteditable="true"]:focus{background:rgba(255,255,255,.12);box-shadow:0 0 0 2px rgba(224,180,92,.55)}
-
-  .cathead{display:flex;align-items:center;gap:11px;margin:22px 2px 2px}
-  .cathead:first-of-type{margin-top:10px}
-  .cathead .k{font-size:13px;font-weight:800;letter-spacing:.02em;color:var(--accent)}
-  .cathead .line{flex:1;height:1px;background:var(--line)}
 
   .section{background:var(--panel);border:1px solid var(--line);border-radius:16px;margin:11px 0;overflow:hidden;box-shadow:0 5px 18px rgba(70,52,20,.05);scroll-margin-top:72px}
   .section-header{display:flex;align-items:center;gap:11px;padding:12px 18px 11px;border-bottom:1px solid var(--line)}
@@ -92,20 +39,12 @@
   .section-body{padding:14px 18px 18px}
   .helper{font-size:13.5px;font-weight:600;color:var(--muted);margin:0 0 8px;padding-left:13px;border-left:3px solid var(--accent)}
   .helper b{color:var(--text);font-weight:800}
-  .leg{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 2px}
-  .leg span{font-size:11.5px;font-weight:700;color:#6a5233;background:#f1e8d5;border-radius:999px;padding:3px 10px;font-variant-numeric:tabular-nums}
-
-  .example{margin-top:11px;background:#f8f1e2;border:1px dashed #ddd0b6;border-radius:10px;padding:9px 13px 12px}
-  .example .exl{font-size:10px;font-weight:800;letter-spacing:.12em;color:#a8987e;margin-bottom:5px}
-  .example .exc{font-size:12.5px;line-height:1.85;color:#6d5c49;font-weight:400}
-  .example .exc b{color:#3d3120;font-weight:800}
 
   .q{padding:14px 0;border-top:1px dashed var(--line)}
   .q:first-child{border-top:0;padding-top:2px}
   .qhead{display:flex;gap:9px;align-items:baseline;margin-bottom:9px;flex-wrap:wrap}
   .qno{flex:none;font-size:11px;font-weight:800;color:var(--accent);background:var(--accent-soft);border-radius:6px;padding:3px 8px;font-variant-numeric:tabular-nums;align-self:flex-start}
   .qtext{font-size:14.5px;font-weight:700;color:var(--text);line-height:1.5;flex:1;min-width:0}
-  .qtag{flex:none;font-size:10.5px;font-weight:800;letter-spacing:.03em;color:#a8987e;border:1px solid var(--line);border-radius:6px;padding:2px 7px}
 
   .likert{display:flex;gap:6px;flex-wrap:wrap}
   .likert label{flex:1 1 auto;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;padding:7px 10px;border:1px solid var(--line);border-radius:999px;background:var(--panel);transition:.12s ease;white-space:nowrap}
@@ -126,137 +65,55 @@
   .tin{width:100%;font-family:var(--font);font-size:14px;font-weight:500;color:var(--text);background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 13px;line-height:1.65;transition:.12s ease}
   .tin::placeholder{color:#b7a78c}
   .tin:focus{outline:none;border-color:var(--accent);background:#fff;box-shadow:0 0 0 3px var(--accent-soft)}
+  .tin:disabled{background:#f1ece0;color:#b7a78c;cursor:not-allowed;box-shadow:none}
   textarea.tin{min-height:76px;resize:vertical}
   .qbody{margin-top:2px}
   .repro{margin-top:9px}
   .repro .fl{font-size:12px;color:var(--muted);margin-bottom:4px;display:block}
 
-  /* 저장소 설정 바 */
-  .cfg{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin:2px 0 12px;padding:10px 13px;border:1px solid var(--line);border-radius:12px;background:var(--bg);font-size:12.5px;font-weight:600;color:var(--muted)}
-  .cfg b{color:var(--accent);font-weight:800}
-  .cfg .mini{cursor:pointer;font:700 11.5px/1 var(--font);color:var(--muted);background:transparent;border:1px solid var(--line);border-radius:7px;padding:6px 10px}
-  .cfg .mini:hover{color:var(--accent);border-color:var(--accent)}
-  .cfg input{font-family:var(--font);font-size:12.5px;color:var(--text);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 9px;min-width:120px}
-  .cfg input:focus{outline:none;border-color:var(--accent)}
-  .cfg.bad{border-color:#c2563f;color:#c2563f}
-  .cfg.bad b{color:#c2563f}
+  .needfix{border-radius:12px;box-shadow:0 0 0 3px var(--accent),0 0 0 9px var(--accent-soft)!important;animation:nfPulse .85s ease-out 1}
+  @keyframes nfPulse{from{box-shadow:0 0 0 3px var(--accent),0 0 0 0 rgba(154,107,22,.4)}to{box-shadow:0 0 0 3px var(--accent),0 0 0 9px var(--accent-soft)}}
+  @media (prefers-reduced-motion:reduce){.needfix{animation:none}}
 
-  .btnrow{display:flex;flex-wrap:wrap;gap:9px;margin:12px 0 2px}
-  .btn{cursor:pointer;font:800 13px/1 var(--font);border-radius:10px;padding:11px 17px;border:1px solid var(--accent);background:var(--accent);color:#fff;transition:.12s ease;display:inline-flex;align-items:center;gap:7px}
+  .btnrow{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin:14px 0 2px}
+  .btn{cursor:pointer;font:800 14px/1 var(--font);border-radius:10px;padding:13px 22px;border:1px solid var(--accent);background:var(--accent);color:#fff;transition:.12s ease;display:inline-flex;align-items:center;gap:7px}
   .btn:hover{filter:brightness(1.06)}
-  .btn.ghost{background:transparent;color:var(--accent)}
-  .btn.ghost:hover{background:var(--accent-soft);filter:none}
-  .btn.warn{border-color:#c2563f;color:#c2563f;background:transparent}
-  .btn.warn:hover{background:rgba(194,86,63,.1)}
+  .btn.wait{background:#e7dcc3;border-color:#e0d3b6;color:#9a8a70;box-shadow:none;filter:none}
+  .btn.wait:hover{filter:none}
 
-  .fab{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:70;display:flex;align-items:center;gap:12px;padding:8px 10px 8px 17px;border:1px solid var(--line);border-radius:14px;background:rgba(253,250,243,.97);backdrop-filter:blur(8px);box-shadow:0 10px 30px rgba(50,38,15,.2)}
-  .fab .pg{font-size:12.5px;font-weight:800;color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums}
-  .fab .pg b{color:var(--accent)}
-  .fab .bar{width:84px;height:6px;border-radius:999px;background:var(--accent-soft);overflow:hidden;flex:none}
-  .fab .bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .22s ease}
-  .fbtn{cursor:pointer;font:800 12.5px/1 var(--font);border-radius:9px;padding:9px 13px;border:1px solid var(--accent);background:var(--accent);color:#fff;white-space:nowrap}
-  .fbtn.ghost{background:transparent;color:var(--accent)}
-  .fbtn:hover{filter:brightness(1.06)}
-
-  .toast{position:fixed;left:50%;bottom:78px;transform:translateX(-50%) translateY(12px);z-index:80;background:#2b2118;color:#fff;font-size:13px;font-weight:700;padding:11px 20px;border-radius:11px;box-shadow:0 12px 30px rgba(0,0,0,.35);opacity:0;pointer-events:none;transition:.22s ease}
+  .toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(12px);z-index:80;background:#2b2118;color:#fff;font-size:13px;font-weight:700;padding:11px 20px;border-radius:11px;box-shadow:0 12px 30px rgba(0,0,0,.35);opacity:0;pointer-events:none;transition:.22s ease}
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
-  @media(max-width:860px){
-    .panel{position:fixed;top:0;right:0;bottom:0;width:272px;max-width:82vw;z-index:60;box-shadow:-14px 0 40px rgba(50,38,15,.3)}
-    .panel-inner{position:static;max-height:none;height:100%;overflow-y:auto}
-    .panel-head{position:sticky;top:0}
-  }
-  @media(max-width:1420px){ .navdiv{display:none} .topnav .in{gap:12px} .topnav .brand{padding-right:0} .tabs{padding:0;justify-content:flex-start} .navtools{padding-left:0} }
   @media(max-width:720px){
-    .topnav .in{gap:10px;padding:0 14px}
-    main{padding:16px 14px 110px}
+    .topnav .in{padding:0 14px}
+    main{padding:16px 14px 50px}
     .hero{padding:20px 18px}.hero h1{font-size:25px}
-    .fab{left:10px;right:10px;transform:none;justify-content:space-between}
     .toast{left:10px;right:10px;transform:translateY(12px);width:auto}
     .toast.show{transform:translateY(0)}
   }
   @media print{
-    .topnav,.panel,.fab,.toast{display:none!important}
-    .shell,.col-main{display:block}
+    .topnav,.toast{display:none!important}
     main{width:100%;padding:0;margin:0;max-width:none}
     body{background:#fff;font-size:11pt;zoom:1}
     .likert label.on,.choice label.on{-webkit-print-color-adjust:exact;print-color-adjust:exact}
     .section,.hero{break-inside:avoid;box-shadow:none}
     .hero{background:#2b2118!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
   }
-
-  @media screen{
-  body.t-dark{--bg:#171209;--panel:#1f1810;--line:#3c3122;--text:#ece3d0;--muted:#b0a184;--accent:#e0b45c;--accent-soft:rgba(224,180,92,.14);--dark:#ece3d0}
-  body.t-dark .topnav{background:rgba(23,18,9,.9);border-bottom-color:#332818;box-shadow:0 2px 10px rgba(0,0,0,.28)}
-  body.t-dark .tabs a{color:#a89a80}
-  body.t-dark .tabs a .n{color:#847352}
-  body.t-dark .tabdiv,body.t-dark .navdiv{background:#3c3122}
-  body.t-dark .navtools,body.t-dark .topnav .brand{background:rgba(255,255,255,.028)}
-  body.t-dark .navdiv.sm{background:#332818}
-  body.t-dark .tabs::-webkit-scrollbar-thumb{background:#4a3d28}
-  body.t-dark .lnk{color:#a89a80}
-  body.t-dark .toc a{color:#a89a80}
-  body.t-dark .toc a .tn{color:#847352}
-  body.t-dark .panel-close:hover{background:rgba(255,255,255,.08)}
-  body.t-dark .hero{background:linear-gradient(135deg,#241a0a 0%,#6e4d10 100%)}
-  body.t-dark .hero p{color:#e8dcc2}
-  body.t-dark .section{box-shadow:0 8px 24px rgba(0,0,0,.34)}
-  body.t-dark .leg span{color:#ecd6a2;background:rgba(224,180,92,.12)}
-  body.t-dark .example{background:rgba(255,255,255,.025);border-color:#3c3122}
-  body.t-dark .example .exl{color:#9a8a70}
-  body.t-dark .example .exc{color:#c2b391}
-  body.t-dark .example .exc b{color:#ece3d0}
-  body.t-dark .likert .cap{color:#9a8a70}
-  body.t-dark .qtag{color:#9a8a70;border-color:#3c3122}
-  body.t-dark .tin::placeholder{color:#6f6148}
-  body.t-dark .tin:focus{background:#241c10}
-  body.t-dark .fab{background:rgba(31,24,16,.97)}
-  }
 </style>
 </head>
-<body class="t-light">
-<div class="shell">
-  <div class="col-main">
-    <header class="topnav">
-      <div class="in">
-        <div class="brand"><span class="ver" contenteditable="true" data-k="ver">v0.17</span>사내 테스트 설문</div>
-        <span class="navdiv"></span>
-        <nav class="tabs" id="nav" aria-label="목차"></nav>
-        <span class="navdiv"></span>
-        <div class="navtools">
-          <a class="lnk" id="resultsLink" href="results.html">📊 결과지</a>
-          <div class="switch" role="group" aria-label="테마 선택">
-            <button type="button" class="sbtn" data-theme="light">화이트</button>
-            <button type="button" class="sbtn" data-theme="dark">다크</button>
-          </div>
-          <span class="navdiv sm"></span>
-          <button type="button" class="toc-btn" id="tocBtn" aria-expanded="false" aria-label="목차 펼치기/접기">☰ 목차</button>
-        </div>
-      </div>
-    </header>
+<body>
+  <header class="topnav">
+    <div class="in"><div class="brand">DWH 사내테스트 설문조사</div></div>
+  </header>
 
-    <main>
-      <section class="hero" id="doc-top">
-        <h1 contenteditable="true" data-k="title">사내 테스트 설문</h1>
-        <p contenteditable="true" data-k="sub">Desktop Wallet Heroes 사내 플레이 테스트 — 아래 문항에 응답해 주세요. 소요 약 5분. 응답은 브라우저에 자동 저장되며, 마지막 ‘제출’ 절에서 GitHub 로 올립니다.</p>
-      </section>
-      <form id="survey" autocomplete="off"></form>
-    </main>
-  </div>
+  <main>
+    <section class="hero" id="doc-top">
+      <h1 contenteditable="true" data-k="title">DWH 사내테스트 설문조사</h1>
+      <p contenteditable="true" data-k="sub">Desktop Wallet Heroes 사내 플레이 테스트 피드백입니다. 모든 문항에 응답하면 제출 버튼이 활성화됩니다.</p>
+    </section>
+    <form id="survey" autocomplete="off"></form>
+  </main>
 
-  <aside class="panel" id="panel" aria-label="목차">
-    <div class="panel-inner">
-      <div class="panel-head"><span class="dt">목차</span><button type="button" class="panel-close" id="tocClose" aria-label="목차 접기">✕</button></div>
-      <nav class="toc" id="toc"></nav>
-    </div>
-  </aside>
-</div>
-
-<div class="fab" id="fab">
-  <span class="pg"><b id="fabDone">0</b> / <span id="fabTotal">0</span> 응답</span>
-  <span class="bar"><i id="fabBar"></i></span>
-  <button type="button" class="fbtn" id="fabJump">제출 ↓</button>
-</div>
 <div class="toast" id="toast"></div>
 
 <script src="survey-data.js"></script>
@@ -265,15 +122,12 @@
   "use strict";
   var D = window.DWH, SKEY = D.SKEY, SCALE = D.SCALE, SECTIONS = D.SECTIONS;
   var esc = function(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); };
-  var typeLabel = { scale5:"5점 척도", choice:"객관식", text:"주관식", textarea:"주관식", bug:"발생 여부" };
+  var EMAIL = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 
   var form = document.getElementById("survey");
-  var html = "", lastCat = null;
+  var html = "";
   SECTIONS.forEach(function(sec){
-    if(sec.cat && sec.cat!==lastCat){ html += '<div class="cathead"><span class="k">'+esc(sec.cat)+'</span><span class="line"></span></div>'; lastCat = sec.cat; }
     html += '<section class="section" id="'+sec.id+'"><div class="section-header"><div class="section-title"><span class="num">'+esc(sec.no)+'</span><h2>'+esc(sec.title)+'</h2></div></div><div class="section-body">';
-    if(sec.helper) html += '<p class="helper">'+sec.helper+'</p>';
-    if(sec.scaleLegend) html += '<div class="leg"><span>1 전혀 아니다</span><span>2 아니다</span><span>3 보통</span><span>4 그렇다</span><span>5 매우 그렇다</span></div>';
     if(sec.bodyHtml) html += sec.bodyHtml;
 
     if(sec.fields){
@@ -294,7 +148,7 @@
     if(sec.questions){
       sec.questions.forEach(function(q){
         var nm = "q"+q.no;
-        html += '<div class="q"><div class="qhead"><span class="qno">'+esc(q.no)+'</span><span class="qtext">'+esc(q.t)+'</span><span class="qtag">'+(typeLabel[q.type]||"")+'</span></div><div class="qbody">';
+        html += '<div class="q"><div class="qhead"><span class="qno">'+esc(q.no)+'</span><span class="qtext">'+esc(q.t)+'</span></div><div class="qbody">';
         if(q.type==="scale5"){
           html += '<div class="likert" data-name="'+nm+'">';
           for(var i=1;i<=5;i++){ html += '<label><input type="radio" name="'+nm+'" value="'+i+'"><span class="lv">'+i+'</span><span class="cap">'+SCALE[i-1]+'</span></label>'; }
@@ -306,7 +160,7 @@
         } else if(q.type==="bug"){
           html += '<div class="choice" data-name="'+nm+'">';
           ["유","무"].forEach(function(op){ html += '<label><input type="radio" name="'+nm+'" value="'+op+'"><span>'+op+'</span></label>'; });
-          html += '</div><div class="repro"><span class="fl">상황 · 재현 경로</span><textarea class="tin" name="'+nm+'r" placeholder="빌드 버전 · 조작 순서 · 발생 시점"></textarea></div>';
+          html += '</div><div class="repro"><span class="fl">상황 · 재현 경로</span><textarea class="tin" name="'+nm+'r" placeholder="‘유’ 선택 시 입력: 빌드 버전 · 조작 순서 · 발생 시점" disabled></textarea></div>';
         } else {
           html += '<textarea class="tin" name="'+nm+'" placeholder="자유롭게 적어 주세요"></textarea>';
         }
@@ -315,29 +169,23 @@
     }
 
     if(sec.custom==="submit"){
-      html += '<div class="cfg" id="cfg"></div>';
-      html += '<div class="btnrow"><button type="button" class="btn" id="btnSubmit">✅ 제출하기</button></div>';
+      html += '<div class="btnrow"><button type="button" class="btn wait" id="btnSubmit">제출하기</button></div>';
     }
     html += '</div></section>';
   });
   form.innerHTML = html;
 
-  var navEl = document.getElementById("nav"), tocEl = document.getElementById("toc");
-  var nh = "", lc = null;
-  SECTIONS.forEach(function(sec,i){
-    if(sec.cat!==lc && i>0) nh += '<span class="tabdiv"></span>'; lc = sec.cat;
-    nh += '<a href="#'+sec.id+'" data-sec="'+sec.id+'"><span class="n">'+esc(sec.no)+'</span>'+esc(sec.nav||sec.title)+'</a>';
-  });
-  navEl.innerHTML = nh;
-  var th = "", lc2 = null;
-  SECTIONS.forEach(function(sec){
-    if(sec.cat!==lc2){ th += '<div class="toc-cat">'+esc(sec.cat)+'</div>'; lc2 = sec.cat; }
-    th += '<a href="#'+sec.id+'" data-sec="'+sec.id+'"><span class="tn">'+esc(sec.no)+'</span>'+esc(sec.title)+'</a>';
-  });
-  tocEl.innerHTML = th;
+  var F = D.flatten(), COLS = F.COLS;
 
-  var F = D.flatten(), RADIO = F.RADIO, COLS = F.COLS;
-  document.getElementById("fabTotal").textContent = RADIO.length;
+  // 완료 판정에 쓸 항목 순서(화면 순서). repro 는 해당 버그가 '유'일 때만 필수.
+  var order = [], bugRepros = [];
+  F.Q.forEach(function(q){
+    if(q.type==="scale5"||q.type==="choice") order.push({ name:q.name, kind:"radio" });
+    else if(q.type==="email") order.push({ name:q.name, kind:"text", email:true });
+    else if(q.type==="text") order.push({ name:q.name, kind:"text" });
+    else if(q.type==="textarea") order.push({ name:q.name, kind:"text" });
+    else if(q.type==="bug"){ order.push({ name:q.name, kind:"radio" }); order.push({ name:q.name+"r", kind:"repro", bug:q.name }); bugRepros.push(q.name); }
+  });
 
   function getVal(name){
     var r = form.querySelector('input[type="radio"][name="'+CSS.escape(name)+'"]:checked');
@@ -347,16 +195,37 @@
   }
   function gather(){ var o = {}; COLS.forEach(function(c){ var v = getVal(c.name); if(v) o[c.name] = v; }); return o; }
 
+  function itemDone(it){
+    if(it.kind==="radio") return !!getVal(it.name);
+    if(it.kind==="repro"){ return getVal(it.bug)==="유" ? !!getVal(it.name) : true; }
+    var v = getVal(it.name);
+    if(!v) return false;
+    if(it.email) return EMAIL.test(v);
+    return true;
+  }
+  function firstIncomplete(){ for(var i=0;i<order.length;i++){ if(!itemDone(order[i])) return order[i]; } return null; }
+  function isComplete(){ return firstIncomplete()===null; }
+
   function syncChips(){
     form.querySelectorAll('.likert label, .choice label').forEach(function(lb){
       var inp = lb.querySelector('input'); if(inp) lb.classList.toggle('on', inp.checked);
     });
   }
-  function progress(){
-    var done = 0; RADIO.forEach(function(n){ if(getVal(n)) done++; });
-    document.getElementById("fabDone").textContent = done;
-    document.getElementById("fabBar").style.width = (RADIO.length ? (done/RADIO.length*100) : 0) + "%";
+  // 버그 '유'면 재현 주관식 활성화, '무'(또는 미선택)면 비활성화·초기화
+  function syncRepro(){
+    bugRepros.forEach(function(nm){
+      var ta = form.querySelector('textarea[name="'+CSS.escape(nm+"r")+'"]'); if(!ta) return;
+      var on = getVal(nm)==="유";
+      ta.disabled = !on;
+      if(!on && ta.value) ta.value = "";
+    });
   }
+  function updateSubmit(){ btnSubmit.classList.toggle("wait", !isComplete()); }
+
+  var btnSubmit = document.getElementById("btnSubmit");
+  var toastEl = document.getElementById("toast"), toastT;
+  function toast(msg){ toastEl.textContent = msg; toastEl.classList.add("show"); clearTimeout(toastT); toastT = setTimeout(function(){ toastEl.classList.remove("show"); }, 2200); }
+
   function save(){ try{ localStorage.setItem(SKEY+"answers", JSON.stringify(gather())); }catch(e){} }
   function restore(){
     var data = {}; try{ data = JSON.parse(localStorage.getItem(SKEY+"answers")||"{}")||{}; }catch(e){}
@@ -367,48 +236,27 @@
       else { var el = form.querySelector('[name="'+CSS.escape(name)+'"]'); if(el) el.value = val; }
     });
   }
-
-  function refresh(){ syncChips(); progress(); }
+  function refresh(){ syncRepro(); syncChips(); updateSubmit(); }
   restore(); refresh();
   form.addEventListener("input", function(){ save(); refresh(); });
   form.addEventListener("change", function(){ save(); refresh(); });
 
-  var cfgEl = document.getElementById("cfg");
-  function renderCfg(){
-    if(D.resolveEndpoint()){ cfgEl.style.display = "none"; return; }
-    cfgEl.style.display = "";
-    cfgEl.className = "cfg bad";
-    cfgEl.innerHTML = '<b>제출 대상이 설정되지 않았습니다.</b> survey-data.js 의 <b>DWH.ENDPOINT</b> 에 Apps Script URL 을 넣으세요. &nbsp;<button type="button" class="mini" id="cfgEdit">임시 지정</button>';
-    document.getElementById("cfgEdit").addEventListener("click", editCfg);
+  function jumpTo(it){
+    if(!it) return;
+    var el = form.querySelector('[name="'+CSS.escape(it.name)+'"]');
+    if(!el) return;
+    var box = el.closest('.q, .field') || el.closest('.section') || el;
+    box.scrollIntoView({ behavior:"smooth", block:"center" });
+    box.classList.add("needfix"); setTimeout(function(){ box.classList.remove("needfix"); }, 1000);
+    if(el.tagName==="TEXTAREA" || (el.tagName==="INPUT" && el.type!=="radio")){ try{ el.focus({ preventScroll:true }); }catch(e){} }
   }
-  function editCfg(){
-    cfgEl.className = "cfg";
-    cfgEl.innerHTML = 'Apps Script URL &nbsp;<input id="cfgUrl" placeholder="https://script.google.com/macros/s/.../exec" value="'+esc(D.resolveEndpoint())+'" style="min-width:320px"> '+
-      '<button type="button" class="mini" id="cfgSave">저장</button> <button type="button" class="mini" id="cfgCancel">취소</button>';
-    document.getElementById("cfgSave").addEventListener("click", function(){
-      var u = document.getElementById("cfgUrl").value.trim();
-      if(!u){ toast("URL 을 입력하세요"); return; }
-      D.saveEndpoint(u); renderCfg(); toast("제출 대상을 저장했습니다");
-    });
-    document.getElementById("cfgCancel").addEventListener("click", renderCfg);
-  }
-  renderCfg();
 
-  var toastEl = document.getElementById("toast"), toastT;
-  function toast(msg){ toastEl.textContent = msg; toastEl.classList.add("show"); clearTimeout(toastT); toastT = setTimeout(function(){ toastEl.classList.remove("show"); }, 2200); }
-  function missing(){ var m=0; RADIO.forEach(function(n){ if(!getVal(n)) m++; }); return m; }
-
-  document.getElementById("btnSubmit").addEventListener("click", async function(){
+  btnSubmit.addEventListener("click", async function(){
+    var it = firstIncomplete();
+    if(it){ jumpTo(it); toast("아직 응답하지 않은 문항이 있습니다"); return; }
     var ep = D.resolveEndpoint();
-    if(!ep){ toast("먼저 제출 대상(Apps Script URL)을 설정하세요"); editCfg(); return; }
+    if(!ep){ toast("제출 대상(Apps Script URL)이 설정되지 않았습니다"); return; }
     var ans = gather();
-    var blanks = [];
-    if(!ans.name) blanks.push("성함");
-    if(!ans.email) blanks.push("이메일");
-    if(blanks.length && !confirm(blanks.join(" · ")+" 이(가) 비어 있습니다. 그대로 제출할까요?")) return;
-    if(ans.email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(ans.email)){ if(!confirm("이메일 형식이 올바르지 않아 보입니다. 그대로 제출할까요?")) return; }
-    var m = missing();
-    if(m && !confirm("미응답 "+m+"문항이 있습니다. 그대로 제출할까요?")) return;
     var btn = this, label = btn.textContent; btn.disabled = true; btn.textContent = "제출 중…";
     try{
       await fetch(ep, { method:"POST", mode:"no-cors", body: JSON.stringify(D.buildSubmission(ans)) });
@@ -416,6 +264,7 @@
       form.querySelectorAll('input[type="radio"]').forEach(function(r){ r.checked=false; });
       form.querySelectorAll('.tin').forEach(function(t){ t.value=""; });
       refresh();
+      window.scrollTo({ top:0, behavior:"smooth" });
       toast("제출 완료 — 참여해 주셔서 감사합니다");
     }catch(err){
       toast("제출 실패: 네트워크를 확인하고 다시 시도하세요");
@@ -423,7 +272,6 @@
       btn.disabled = false; btn.textContent = label;
     }
   });
-  document.getElementById("fabJump").addEventListener("click", function(){ var el=document.getElementById("s10"); if(el) el.scrollIntoView({behavior:"smooth"}); });
 
   try{
     document.querySelectorAll('[contenteditable="true"][data-k]').forEach(function(el){
@@ -431,40 +279,6 @@
       if(saved!==null) el.innerHTML = saved;
       el.addEventListener("input", function(){ try{ localStorage.setItem(key, el.innerHTML); }catch(e){} });
     });
-  }catch(e){}
-
-  try{
-    var sbtns = [].slice.call(document.querySelectorAll('.sbtn'));
-    function setTheme(t){ document.body.classList.toggle('t-dark', t==='dark'); document.body.classList.toggle('t-light', t!=='dark'); sbtns.forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-theme')===t); }); try{ localStorage.setItem(SKEY+'theme', t); }catch(e){} }
-    var savedT='light'; try{ savedT=localStorage.getItem(SKEY+'theme')||'light'; }catch(e){}
-    setTheme(savedT);
-    sbtns.forEach(function(b){ b.addEventListener('click', function(){ setTheme(b.getAttribute('data-theme')); }); });
-  }catch(e){}
-
-  try{
-    var tocBtn=document.getElementById('tocBtn'), tocClose=document.getElementById('tocClose');
-    function toc(open){ document.body.classList.toggle('toc-open', open); if(tocBtn) tocBtn.setAttribute('aria-expanded', open?'true':'false'); }
-    if(tocBtn) tocBtn.addEventListener('click', function(){ toc(!document.body.classList.contains('toc-open')); });
-    if(tocClose) tocClose.addEventListener('click', function(){ toc(false); });
-  }catch(e){}
-
-  try{
-    var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    var tabsEl = document.getElementById("nav");
-    var tabLinks = [].slice.call(document.querySelectorAll('.tabs a[data-sec]'));
-    var tocLinks = [].slice.call(document.querySelectorAll('.toc a[data-sec]'));
-    var allLinks = tabLinks.concat(tocLinks);
-    var ids=[], seen={};
-    allLinks.forEach(function(a){ var id=a.getAttribute('data-sec'); if(!seen[id]&&document.getElementById(id)){ seen[id]=1; ids.push(id); } });
-    function centerTab(a){ if(!tabsEl||!a) return; var tr=tabsEl.getBoundingClientRect(), ar=a.getBoundingClientRect(); tabsEl.scrollTo({left:Math.max(0,tabsEl.scrollLeft+(ar.left-tr.left)-(tr.width/2)+(ar.width/2)),behavior:reduce?"auto":"smooth"}); }
-    var last=null;
-    function setActive(id){ if(id===last) return; last=id; allLinks.forEach(function(a){ a.classList.toggle('active', a.getAttribute('data-sec')===id); }); var t=tabLinks.filter(function(a){return a.getAttribute('data-sec')===id;})[0]; if(t) centerTab(t); }
-    var topnavEl=document.querySelector('.topnav');
-    function spy(){ var line=(topnavEl?topnavEl.getBoundingClientRect().bottom:60)+80; var cur=ids.length?ids[0]:null; for(var i=0;i<ids.length;i++){ var el=document.getElementById(ids[i]); if(el&&el.getBoundingClientRect().top<=line) cur=ids[i]; else break; } setActive(cur); }
-    allLinks.forEach(function(a){ a.addEventListener('click', function(){ var el=document.getElementById(a.getAttribute('data-sec')); if(!el) return; if(document.body.classList.contains('toc-open')&&window.innerWidth<=860) document.body.classList.remove('toc-open'); el.classList.add('jump-hl'); setTimeout(function(){ el.classList.remove('jump-hl'); }, 950); }); });
-    window.addEventListener('scroll', function(){ window.requestAnimationFrame(spy); }, {passive:true});
-    window.addEventListener('resize', function(){ last=null; spy(); });
-    spy();
   }catch(e){}
 })();
 </script>
