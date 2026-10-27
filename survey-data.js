@@ -6,7 +6,7 @@
   DWH.SKEY   = "dwh-survey:";
   DWH.SCALE  = ["전혀 아니다","아니다","보통","그렇다","매우 그렇다"];
   // Google Apps Script 웹앱 URL(배포 후 여기에 붙여넣으면 전원이 설정 없이 제출·집계된다)
-  DWH.ENDPOINT = "";
+  DWH.ENDPOINT = "https://script.google.com/macros/s/AKfycbwZ7Z2SQSVx8-m4Q9V7nRjH8v9XmuDYQAlyVBl3SpgMzk3K72bCve09uiIc0fXksWbXNA/exec";
 
   // type: scale5 | choice(options) | text | textarea | bug(유/무 + 재현)
   DWH.SECTIONS = [
