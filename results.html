@@ -264,7 +264,7 @@
 
   function scaleStats(name, rows){
     var c=[0,0,0,0,0], n=0, sum=0;
-    rows.forEach(function(r){ var v=parseInt(r.answers[name],10); if(v>=1&&v<=5){ c[v-1]++; n++; sum+=v; } });
+    rows.forEach(function(r){ var v=parseFloat(r.answers[name]); if(v>=0.5&&v<=5){ var b=Math.min(5,Math.max(1,Math.round(v))); c[b-1]++; n++; sum+=v; } });
     return { counts:c, n:n, avg:n?(sum/n):0 };
   }
   function choiceStats(name, options, rows){
