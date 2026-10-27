@@ -13,7 +13,8 @@
     { id:"s1", no:"01", cat:"개요", nav:"개요", title:"목적 · 대상",
       bodyHtml:
         '<p class="helper"><b>목적</b>: 사내 플레이 테스트에서 재미 · 밸런스 · UX · 안정성 이슈를 수집한다.</p>'+
-        '<p class="helper"><b>대상</b>: 사내 테스터(기획 · 개발 · 아트 · QA). &nbsp; <b>소요</b>: 약 5분.</p>' },
+        '<p class="helper"><b>대상</b>: 사내 테스터(기획 · 개발 · 아트 · QA). &nbsp; <b>소요</b>: 약 5분.</p>'+
+        '<p class="helper"><b>별점(5점)</b>: 별이 많을수록 긍정입니다. 리뷰처럼 반 별(0.5점) 선택 가능. 1 전혀 아니다 ~ 5 매우 그렇다.</p>' },
 
     { id:"s2", no:"02", cat:"응답 정보", nav:"응답자·환경", title:"응답자 · 플레이 환경",
       helper:"분석 때 환경별로 묶어 보기 위한 기본 정보입니다.",
@@ -111,9 +112,10 @@
       });
       if(sec.questions) sec.questions.forEach(function(q){
         var nm = "q"+q.no;
-        COLS.push({ name:nm, label:q.no });
+        // 라벨에 Q 접두어: 구글 시트가 "3-1" 등을 날짜로 자동변환하는 것 방지
+        COLS.push({ name:nm, label:"Q"+q.no });
         if(q.type==="scale5"||q.type==="choice"||q.type==="bug") RADIO.push(nm);
-        if(q.type==="bug") COLS.push({ name:nm+"r", label:q.no+" 재현" });
+        if(q.type==="bug") COLS.push({ name:nm+"r", label:"Q"+q.no+" 재현" });
         Q.push({ name:nm, no:q.no, text:q.t, type:q.type, options:q.options||(q.type==="bug"?["유","무"]:null), sec:sec });
       });
     });
