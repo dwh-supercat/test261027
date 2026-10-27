@@ -19,7 +19,7 @@
     { id:"s2", no:"02", cat:"응답 정보", nav:"응답자·환경", title:"응답자 · 플레이 환경",
       helper:"분석 때 환경별로 묶어 보기 위한 기본 정보입니다.",
       fields:[
-        { name:"name",     label:"성함",            type:"text",   ph:"이름 또는 닉네임" },
+        { name:"name",     label:"성함(닉넴)",      type:"text",   ph:"성함 / 닉네임", note:"성함과 닉넴이 같으면 닉넴은 생략" },
         { name:"email",    label:"이메일",          type:"email",  ph:"예: id@supercat.co.kr" },
         { name:"role",     label:"직군",            type:"choice", options:["기획","개발","아트","QA","기타"] },
         { name:"viewScale",label:"게임화면",        type:"choice", options:["기본","1.5배","2배"] },
