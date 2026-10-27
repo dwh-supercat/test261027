@@ -46,14 +46,15 @@
   .qno{flex:none;font-size:11px;font-weight:800;color:var(--accent);background:var(--accent-soft);border-radius:6px;padding:3px 8px;font-variant-numeric:tabular-nums;align-self:flex-start}
   .qtext{font-size:14.5px;font-weight:700;color:var(--text);line-height:1.5;flex:1;min-width:0}
 
-  .likert{display:flex;gap:6px;flex-wrap:wrap}
-  .likert label{flex:1 1 auto;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;padding:7px 10px;border:1px solid var(--line);border-radius:999px;background:var(--panel);transition:.12s ease;white-space:nowrap}
-  .likert input,.choice input{position:absolute;opacity:0;width:0;height:0;pointer-events:none}
-  .likert .lv{font-size:13px;font-weight:800;color:var(--text);font-variant-numeric:tabular-nums;line-height:1}
-  .likert .cap{font-size:12px;font-weight:700;color:var(--muted);line-height:1}
-  .likert label:hover{border-color:var(--accent);background:var(--accent-soft)}
-  .likert label.on{border-color:var(--accent);background:var(--accent);box-shadow:0 2px 8px rgba(154,107,22,.26)}
-  .likert label.on .lv,.likert label.on .cap{color:#fff}
+  .choice input{position:absolute;opacity:0;width:0;height:0;pointer-events:none}
+  .stars{display:inline-flex;align-items:center;gap:12px;cursor:pointer;user-select:none;-webkit-user-select:none;padding:3px 2px;border-radius:12px;outline:none;line-height:1}
+  .stars:focus-visible{box-shadow:0 0 0 3px var(--accent-soft)}
+  .stars .srow{position:relative;display:inline-flex;line-height:1;font-size:32px}
+  .stars .star{position:relative;display:inline-block;width:1.15em;height:1em;color:var(--line)}
+  .stars .star::before{content:"★";display:block;width:1.15em;text-align:center}
+  .stars .star .f{position:absolute;left:0;top:0;width:0;height:100%;overflow:hidden;color:var(--accent)}
+  .stars .star .f::before{content:"★";display:block;width:1.15em;text-align:center}
+  .stars .sval{font-family:var(--display);font-size:19px;font-weight:800;color:var(--accent);font-variant-numeric:tabular-nums;min-width:30px}
 
   .choice{display:flex;gap:8px;flex-wrap:wrap}
   .choice label{cursor:pointer;position:relative;padding:8px 17px;border:1px solid var(--line);border-radius:999px;background:var(--panel);font-size:13.5px;font-weight:700;color:var(--muted);transition:.12s ease}
@@ -95,7 +96,7 @@
     .topnav,.toast{display:none!important}
     main{width:100%;padding:0;margin:0;max-width:none}
     body{background:#fff;font-size:11pt;zoom:1}
-    .likert label.on,.choice label.on{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .choice label.on,.stars .star .f{-webkit-print-color-adjust:exact;print-color-adjust:exact}
     .section,.hero{break-inside:avoid;box-shadow:none}
     .hero{background:#2b2118!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
   }
@@ -150,9 +151,9 @@
         var nm = "q"+q.no;
         html += '<div class="q"><div class="qhead"><span class="qno">'+esc(q.no)+'</span><span class="qtext">'+esc(q.t)+'</span></div><div class="qbody">';
         if(q.type==="scale5"){
-          html += '<div class="likert" data-name="'+nm+'">';
-          for(var i=1;i<=5;i++){ html += '<label><input type="radio" name="'+nm+'" value="'+i+'"><span class="lv">'+i+'</span><span class="cap">'+SCALE[i-1]+'</span></label>'; }
-          html += '</div>';
+          html += '<div class="stars" data-name="'+nm+'" tabindex="0" role="slider" aria-label="별점 0.5~5점" title="리뷰처럼 좌우로 움직여 0.5~5점(반 별 가능)"><span class="srow">';
+          for(var i=1;i<=5;i++){ html += '<span class="star"><span class="f"></span></span>'; }
+          html += '</span><span class="sval"></span><input type="hidden" name="'+nm+'" value="5"></div>';
         } else if(q.type==="choice"){
           html += '<div class="choice" data-name="'+nm+'">';
           q.options.forEach(function(op){ html += '<label><input type="radio" name="'+nm+'" value="'+esc(op)+'"><span>'+esc(op)+'</span></label>'; });
@@ -174,6 +175,34 @@
     html += '</div></section>';
   });
   form.innerHTML = html;
+
+  // 별점(0.5 단위) 위젯: 리뷰처럼 반 별 선택
+  function starValFromX(srow, clientX){
+    var rect = srow.getBoundingClientRect(), frac = (clientX-rect.left)/rect.width;
+    if(frac<0) frac=0; if(frac>1) frac=1;
+    var v = Math.ceil(frac*10)/2;
+    return v<0.5?0.5:(v>5?5:v);
+  }
+  function paintStars(c, v){
+    var st = c.querySelectorAll('.star');
+    for(var i=0;i<st.length;i++){ var f=st[i].querySelector('.f'), n=i+1; f.style.width=(v>=n?100:(v>=n-0.5?50:0))+"%"; }
+    var sv = c.querySelector('.sval'); if(sv) sv.textContent = v ? (String(v)+"점") : "";
+  }
+  function syncStars(){ form.querySelectorAll('.stars').forEach(function(c){ paintStars(c, parseFloat(c.querySelector('input').value)||0); }); }
+  form.querySelectorAll('.stars').forEach(function(c){
+    var srow=c.querySelector('.srow'), inp=c.querySelector('input');
+    function commit(v){ inp.value = v?String(v):""; paintStars(c, v); save(); refresh(); }
+    srow.addEventListener('mousemove', function(e){ paintStars(c, starValFromX(srow, e.clientX)); });
+    srow.addEventListener('mouseleave', function(){ paintStars(c, parseFloat(inp.value)||0); });
+    srow.addEventListener('click', function(e){ commit(starValFromX(srow, e.clientX)); });
+    c.addEventListener('keydown', function(e){
+      var v=parseFloat(inp.value)||0, nv=null;
+      if(e.key==="ArrowRight"||e.key==="ArrowUp") nv=Math.min(5, v+0.5);
+      else if(e.key==="ArrowLeft"||e.key==="ArrowDown") nv=Math.max(0.5,(v||0.5)-0.5);
+      else return;
+      e.preventDefault(); commit(nv);
+    });
+  });
 
   var F = D.flatten(), COLS = F.COLS;
 
@@ -207,7 +236,7 @@
   function isComplete(){ return firstIncomplete()===null; }
 
   function syncChips(){
-    form.querySelectorAll('.likert label, .choice label').forEach(function(lb){
+    form.querySelectorAll('.choice label').forEach(function(lb){
       var inp = lb.querySelector('input'); if(inp) lb.classList.toggle('on', inp.checked);
     });
   }
@@ -236,7 +265,7 @@
       else { var el = form.querySelector('[name="'+CSS.escape(name)+'"]'); if(el) el.value = val; }
     });
   }
-  function refresh(){ syncRepro(); syncChips(); updateSubmit(); }
+  function refresh(){ syncRepro(); syncChips(); syncStars(); updateSubmit(); }
   restore(); refresh();
   form.addEventListener("input", function(){ save(); refresh(); });
   form.addEventListener("change", function(){ save(); refresh(); });
@@ -248,7 +277,7 @@
     var box = el.closest('.q, .field') || el.closest('.section') || el;
     box.scrollIntoView({ behavior:"smooth", block:"center" });
     box.classList.add("needfix"); setTimeout(function(){ box.classList.remove("needfix"); }, 1000);
-    if(el.tagName==="TEXTAREA" || (el.tagName==="INPUT" && el.type!=="radio")){ try{ el.focus({ preventScroll:true }); }catch(e){} }
+    if(el.tagName==="TEXTAREA" || (el.tagName==="INPUT" && el.type!=="radio" && el.type!=="hidden")){ try{ el.focus({ preventScroll:true }); }catch(e){} }
   }
 
   btnSubmit.addEventListener("click", async function(){
